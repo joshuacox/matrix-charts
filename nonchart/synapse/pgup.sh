@@ -1,4 +1,4 @@
-#1/bin/sh
+#!/bin/sh
 #Deploys the ConfigMap
 kubectl apply -f postgres-configMap.yaml
 #Deploys the PersistentVolume
