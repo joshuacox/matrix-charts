@@ -5,10 +5,18 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: "matrixdotorg/synapse"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v1.25.0"
+
+synapse:
+  server_name: "example.com"
+  report_stats: "yes"
+  port: 8008
+  storage:
+    className: openebs-lvmpv
+    size: 50Gi
 
 imagePullSecrets: []
 nameOverride: ""
@@ -78,10 +86,12 @@ tolerations: []
 
 affinity: {}
 
-
 kubegres:
   replicaCount: 3
   database:
     port: 5432
     size: 900Mi
     storageClassName: openebs-lvmpv
+    dbname: synapsedb
+    superUserPassword: secret123 
+    replicationUserPassword: secret123

@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: synapse
+  name: {{ .Release.Name }}-synapse
+  namespace:  {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -14,20 +15,20 @@ spec:
         app: synapse
     spec:
       containers:
-      - image: matrixdotorg/synapse:v1.25.0
-        name: synapse
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        name: {{ .Release.Name }}-synapse
         args: ["generate"]
         env:
         - name: SYNAPSE_SERVER_NAME
-          value: "example.com"
+          value: {{ .Values.synapse.server_name |quote }} 
         - name: SYNAPSE_REPORT_STATS
-          value: "yes"
+          value: {{ .Values.synapse.report_stats | quote }} 
         volumeMounts:
         - name: data
           mountPath: /data
         ports:
-          - containerPort: 8008
+          - containerPort: {{ .Values.synapse.port }} 
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: synapse-pv-claim
+          claimName: {{ .Release.Name }}-pv-claim
