@@ -1,0 +1,31 @@
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: {{ .Release.Name }}-kubegres
+  namespace:  {{ .Release.Namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: cookie
+
+spec:
+
+   replicas: {{ .Values.replicaCount }}
+   image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+   port: {{ .Values.database.port }}
+
+   database:
+      size: {{ .Values.database.size }}
+      storageClassName: {{ .Values.database.storageClassName }}
+      volumeMount: /var/lib/postgresql/data
+
+   env:
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: {{ .Release.Name }}-secret
+              key: superUserPassword
+
+      - name: POSTGRES_REPLICATION_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: {{ .Release.Name }}-secret
+              key: replicationUserPassword

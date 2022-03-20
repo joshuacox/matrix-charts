@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "14.1"
+
+database:
+  port: 5432
+  size: 900Mi
+  storageClassName: openebs-lvmpv
+  # if left undefined these will be generated
+  #superUserPassword: secret123 
+  #replicationUserPassword: secret123
