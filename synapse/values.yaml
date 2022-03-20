@@ -77,3 +77,11 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+
+kubegres:
+  replicaCount: 3
+  database:
+    port: 5432
+    size: 900Mi
+    storageClassName: openebs-lvmpv
