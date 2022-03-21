@@ -17,17 +17,35 @@ spec:
       containers:
       - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         name: {{ .Release.Name }}-synapse
-        args: ["generate"]
-        env:
-        - name: SYNAPSE_SERVER_NAME
-          value: {{ .Values.synapse.server_name |quote }} 
-        - name: SYNAPSE_REPORT_STATS
-          value: {{ .Values.synapse.report_stats | quote }} 
         volumeMounts:
         - name: data
           mountPath: /data
         ports:
           - containerPort: {{ .Values.synapse.port }} 
+      initContainers:
+      - name: {{ .Release.Name }}-synapse-genconfig
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        args: [ "generate" ]
+        env:
+        - name: SYNAPSE_SERVER_NAME
+          value: {{ .Values.synapse.server_name | quote }} 
+        - name: SYNAPSE_REPORT_STATS
+          value: {{ .Values.synapse.report_stats | quote }} 
+        - name: SYNAPSE_HTTP_PORT
+          value: {{ .Values.synapse.port | quote }} 
+        - name: SYNAPSE_CONFIG_DIR
+          value: {{ .Values.synapse.config_dir | quote }} 
+        - name: SYNAPSE_CONFIG_PATH
+          value: {{ .Values.synapse.config_path | quote }} 
+        - name: SYNAPSE_DATA_DIR
+          value: {{ .Values.synapse.data_dir | quote }} 
+        - name: UID
+          value: {{ .Values.synapse.uid | quote }} 
+        - name: GID
+          value: {{ .Values.synapse.gid | quote }} 
+        volumeMounts:
+        - name: data
+          mountPath: /data
       volumes:
       - name: data
         persistentVolumeClaim:
