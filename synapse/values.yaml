@@ -26,9 +26,12 @@ synapse:
 kubegres:
   replicaCount: 3
   database:
+    host: synapsehost
+    name: synapsedb
+    user: synapseuser
+    pass: synapsepass
     port: 5432
     size: 200Mi
     storageClassName: standard
-    dbname: synapsedb
     superUserPassword: secret123 
     replicationUserPassword: secret123

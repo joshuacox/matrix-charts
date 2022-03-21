@@ -16,10 +16,13 @@ spec:
     spec:
       containers:
       - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        args: [ 'run', '--config-path=/etc/synapse/homeserver.yaml' ]
         name: {{ .Release.Name }}-synapse
         volumeMounts:
         - name: data
           mountPath: /data
+        - name: homeserver
+          mountPath: /etc/synapse
         ports:
           - containerPort: {{ .Values.synapse.port }} 
       initContainers:
@@ -46,7 +49,30 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /data
+      - name: {{ .Release.Name }}-synapse-cat1
+        image: busybox:latest
+        command: [ "sh", "-c", "cat /data/homeserver.yaml" ]
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      - name: {{ .Release.Name }}-synapse-ls
+        image: busybox:latest
+        command: [ "sh", "-c", "rm /data/homeserver.yaml; mkdir -p /data/media_store; chown 991:991 /data/media_store; ls -alh /data" ]
+        volumeMounts:
+        - name: data
+          mountPath: /data
+      - name: {{ .Release.Name }}-synapse-cat
+        image: busybox:latest
+        command: [ "sh", "-c", "cat /etc/synapse/homeserver.yaml" ]
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: homeserver
+          mountPath: /etc/synapse
       volumes:
       - name: data
         persistentVolumeClaim:
           claimName: {{ .Release.Name }}-pv-claim
+      - name: homeserver
+        configMap:
+          name: {{ .Release.Name }}-homeserver-configmap

@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-homeserver-configmap
+  namespace:  {{ .Release.Namespace }}
+data:
+  homeserver.yaml: |-
+    server_name: {{ .Values.synapse.server_name | quote }} 
+    pid_file: /data/homeserver.pid
+    presence:
+    listeners:
+      - port: {{ .Values.synapse.port | int }} 
+        tls: false
+        type: http
+        x_forwarded: true
+        resources:
+          - names: [client, federation]
+            compress: false
+    manhole_settings:
+    limit_remote_rooms:
+    templates:
+    retention:
+    caches:
+      per_cache_factors:
+    database:
+      name: psycopg2
+      txn_limit: 10000
+      args:
+        user: {{ .Values.kubegres.database.user | quote }} 
+        password: {{ .Values.kubegres.database.pass | quote }} 
+        database: {{ .Values.kubegres.database.name | quote }} 
+        host: {{ .Release.Name }}-kubegres.{{ .Release.Namespace }}.svc.cluster.local
+        port: 5432
+        cp_min: 5
+        cp_max: 10
+    log_config: "/data/{{ .Values.synapse.server_name }}.log.config"
+    media_store_path: "/data/media_store"
+    url_preview_accept_language:
+    oembed:
+    registration_shared_secret: {{ randAscii 50 | quote }}
+    account_threepid_delegates:
+    metrics_flags:
+    report_stats: true
+    room_prejoin_state:
+    macaroon_secret_key: {{ randAscii 50 | quote }}
+    form_secret: {{ randAscii 50 | quote }}
+    signing_key_path: "/data/{{ .Values.synapse.server_name }}.signing.key"
+    old_signing_keys:
+    trusted_key_servers:
+      - server_name: {{ .Values.synapse.server_name | quote }} 
+    saml2_config:
+      sp_config:
+      user_mapping_provider:
+        config:
+    oidc_providers:
+    cas_config:
+    sso:
+    password_config:
+       policy:
+    ui_auth:
+    email:
+    push:
+    user_directory:
+    stats:
+    opentracing:
+    redis:
