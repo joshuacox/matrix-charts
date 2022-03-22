@@ -14,3 +14,4 @@ This is a directory of tests where I follow some of the documentations and bring
 ### todo
 
 get postgres to create database and user upon init
+https://www.kubegres.io/doc/override-default-configs.html#primary_init_script
