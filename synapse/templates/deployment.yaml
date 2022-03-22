@@ -6,13 +6,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: synapse
+      app: {{ .Release.Name }}-synapse
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: synapse
+        app: {{ .Release.Name }}-synapse
     spec:
       containers:
       - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}

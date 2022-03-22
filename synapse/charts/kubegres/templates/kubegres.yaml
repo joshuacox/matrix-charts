@@ -22,17 +22,17 @@ spec:
       - name: POSTGRES_PASSWORD
         valueFrom:
            secretKeyRef:
-              name: {{ .Release.Name }}-secret
+              name: {{ .Release.Name }}-kubegres-secret
               key: superUserPassword
 
       - name: POSTGRES_REPLICATION_PASSWORD
         valueFrom:
            secretKeyRef:
-              name: {{ .Release.Name }}-secret
+              name: {{ .Release.Name }}-kubegres-secret
               key: replicationUserPassword
 
       - name: POSTGRES_MY_DB_PASSWORD
         valueFrom:
             secretKeyRef:
-              name: {{ .Release.Name }}-secret
+              name: {{ .Release.Name }}-kubegres-secret
               key: myDbUserPassword

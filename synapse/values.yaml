@@ -23,10 +23,13 @@ synapse:
     className: standard
     size: 50Gi
 
+ingress:
+  enabled: false
+  #metallbAddressPool: "mypool"
+
 kubegres:
   replicaCount: 3
   database:
-    host: synapsehost
     name: synapsedb
     user: synapseuser
     port: 5432
