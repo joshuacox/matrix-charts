@@ -2,7 +2,7 @@ apiVersion: kubegres.reactive-tech.io/v1
 kind: Kubegres
 metadata:
   name: {{ .Release.Name }}-kubegres
-  namespace:  {{ .Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
   annotations:
     nginx.ingress.kubernetes.io/affinity: cookie
 
@@ -17,6 +17,7 @@ spec:
       storageClassName: {{ .Values.database.storageClassName }}
       volumeMount: /var/lib/postgresql/data
 
+   customConfig: {{ .Release.Name }}pg-conf
    env:
       - name: POSTGRES_PASSWORD
         valueFrom:
@@ -29,3 +30,9 @@ spec:
            secretKeyRef:
               name: {{ .Release.Name }}-secret
               key: replicationUserPassword
+
+      - name: POSTGRES_MY_DB_PASSWORD
+        valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-secret
+              key: myDbUserPassword

@@ -27,7 +27,7 @@ data:
       txn_limit: 10000
       args:
         user: {{ .Values.kubegres.database.user | quote }} 
-        password: {{ .Values.kubegres.database.pass | quote }} 
+        password: {{ .Values.kubegres.database.myDbUserPassword | quote }} 
         database: {{ .Values.kubegres.database.name | quote }} 
         host: {{ .Release.Name }}-kubegres.{{ .Release.Namespace }}.svc.cluster.local
         port: 5432
