@@ -2,23 +2,24 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+# WIP replicas are not working yet
+#replicaCount: 1
 
 image:
   repository: "matrixdotorg/synapse"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.25.0"
+  tag: "v1.55.0"
 
 synapse:
   server_name: "example.com"
   report_stats: "yes"
-  config_dir: "/data" 
-  config_path: "/data/homeserver.yaml" 
-  data_dir: "/data"  
+  data_dir: "/data"
   uid: 991
   gid: 991
   port: 8008
+  #loadBalancerIP: 10.0.0.24
+  #metallbAddressPool: "mypool"
   storage:
     className: standard
     size: 50Gi
@@ -35,6 +36,6 @@ kubegres:
     port: 5432
     size: 200Mi
     storageClassName: standard
-    superUserPassword: secret123 
+    superUserPassword: secret123
     replicationUserPassword: secret123
     myDbUserPassword: secret123

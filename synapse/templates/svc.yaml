@@ -4,13 +4,20 @@ metadata:
   labels:
     app: {{ .Release.Name }}-synapse
   name: {{ .Release.Name }}-synapse-service
+  annotations:
+    # This will define the address pool of metallb to use if metallb is used
+{{- if .Values.ingress.metallbAddressPool }}
+    metallb.universe.tf/address-pool: {{ .Values.ingress.metallbAddressPool }}
+{{- end }}
 spec:
-  clusterIP: None
+  type: LoadBalancer
+{{- if .Values.synapse.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.synapse.loadBalancerIP }}
+{{- end }}
   ports:
   - name: http
-    port: {{ .Values.synapse.port }} 
+    port: {{ .Values.synapse.port }}
     protocol: TCP
-    targetPort: {{ .Values.synapse.port }} 
+    targetPort: {{ .Values.synapse.port }}
   selector:
     app: {{ .Release.Name }}-synapse
-  type: ClusterIP

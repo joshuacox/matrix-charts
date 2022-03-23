@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled }}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-synapse-nginx
@@ -9,20 +9,23 @@ metadata:
     #"max_upload_size" also needs to be adjusted inside homeserver.yaml
     nginx.ingress.kubernetes.io/proxy-body-size: 100M
     # This will define the address pool of metallb to use if metallb is used
-{{- if .Values.ingress.metallbAddressPool }} 
-    metallb.universe.tf/address-pool: {{ .Values.ingress.metallbAddressPool }} 
+{{- if .Values.ingress.metallbAddressPool }}
+    metallb.universe.tf/address-pool: {{ .Values.ingress.metallbAddressPool }}
 {{- end }}
 spec:
   rules:
-  - host: {{ .Values.synapse.server_name | quote }} 
+  - host: {{ .Values.synapse.server_name | quote }}
     http:
       paths:
       - path: /
+        pathType: 'Prefix'
         backend:
-          serviceName: {{ .Release.Name }}-synapse-service
-          servicePort: {{ .Values.synapse.port }} 
+          service:
+           name: {{ .Release.Name }}-synapse-service
+           port:
+             number: {{ .Values.synapse.port }}
   tls:
   - hosts:
-    - {{ .Values.synapse.server_name | quote }} 
-    secretName: {{ .Values.synapse.server_name | quote }} 
+    - {{ .Values.synapse.server_name | quote }}
+    secretName: {{ .Values.synapse.server_name | quote }}
 {{- end }}

@@ -4,6 +4,9 @@ metadata:
   name: {{ .Release.Name }}-synapse
   namespace:  {{ .Release.Namespace }}
 spec:
+{{- if .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}-synapse
@@ -20,55 +23,40 @@ spec:
         name: {{ .Release.Name }}-synapse
         volumeMounts:
         - name: data
-          mountPath: /data
+          mountPath: {{ .Values.synapse.data_dir }}
         - name: homeserver
           mountPath: /etc/synapse
         ports:
-          - containerPort: {{ .Values.synapse.port }} 
+          - containerPort: {{ .Values.synapse.port }}
       initContainers:
+      - name: {{ .Release.Name }}-synapse-w8kubegres
+        image: busybox:latest
+        command: ['sh', '-c', "until nslookup {{ .Release.Name }}-kubegres.{{ .Release.Namespace }}.svc.cluster.local; do echo waiting for {{ .Release.Name }}-kubegres; sleep 2; done"]
       - name: {{ .Release.Name }}-synapse-genconfig
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         args: [ "generate" ]
         env:
         - name: SYNAPSE_SERVER_NAME
-          value: {{ .Values.synapse.server_name | quote }} 
+          value: {{ .Values.synapse.server_name | quote }}
         - name: SYNAPSE_REPORT_STATS
-          value: {{ .Values.synapse.report_stats | quote }} 
+          value: {{ .Values.synapse.report_stats | quote }}
         - name: SYNAPSE_HTTP_PORT
-          value: {{ .Values.synapse.port | quote }} 
-        - name: SYNAPSE_CONFIG_DIR
-          value: {{ .Values.synapse.config_dir | quote }} 
-        - name: SYNAPSE_CONFIG_PATH
-          value: {{ .Values.synapse.config_path | quote }} 
+          value: {{ .Values.synapse.port | quote }}
         - name: SYNAPSE_DATA_DIR
-          value: {{ .Values.synapse.data_dir | quote }} 
+          value: {{ .Values.synapse.data_dir | quote }}
         - name: UID
-          value: {{ .Values.synapse.uid | quote }} 
+          value: {{ .Values.synapse.uid | quote }}
         - name: GID
-          value: {{ .Values.synapse.gid | quote }} 
+          value: {{ .Values.synapse.gid | quote }}
         volumeMounts:
         - name: data
-          mountPath: /data
-      - name: {{ .Release.Name }}-synapse-cat1
+          mountPath: {{ .Values.synapse.data_dir }}
+      - name: {{ .Release.Name }}-synapse-prep
         image: busybox:latest
-        command: [ "sh", "-c", "cat /data/homeserver.yaml" ]
+        command: [ "sh", "-c", "rm {{ .Values.synapse.data_dir }}/homeserver.yaml; mkdir -p {{ .Values.synapse.data_dir }}/media_store; chown {{ .Values.synapse.uid }}:{{ .Values.synapse.gid }} {{ .Values.synapse.data_dir }}/media_store" ]
         volumeMounts:
         - name: data
-          mountPath: /data
-      - name: {{ .Release.Name }}-synapse-ls
-        image: busybox:latest
-        command: [ "sh", "-c", "rm /data/homeserver.yaml; mkdir -p /data/media_store; chown 991:991 /data/media_store; ls -alh /data" ]
-        volumeMounts:
-        - name: data
-          mountPath: /data
-      - name: {{ .Release.Name }}-synapse-cat
-        image: busybox:latest
-        command: [ "sh", "-c", "cat /etc/synapse/homeserver.yaml" ]
-        volumeMounts:
-        - name: data
-          mountPath: /data
-        - name: homeserver
-          mountPath: /etc/synapse
+          mountPath: {{ .Values.synapse.data_dir }}
       volumes:
       - name: data
         persistentVolumeClaim:

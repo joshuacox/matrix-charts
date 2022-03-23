@@ -5,11 +5,11 @@ metadata:
   namespace:  {{ .Release.Namespace }}
 data:
   homeserver.yaml: |-
-    server_name: {{ .Values.synapse.server_name | quote }} 
+    server_name: {{ .Values.synapse.server_name | quote }}
     pid_file: /data/homeserver.pid
     presence:
     listeners:
-      - port: {{ .Values.synapse.port | int }} 
+      - port: {{ .Values.synapse.port | int }}
         tls: false
         type: http
         x_forwarded: true
@@ -26,9 +26,9 @@ data:
       name: psycopg2
       txn_limit: 10000
       args:
-        user: {{ .Values.kubegres.database.user | quote }} 
-        password: {{ .Values.kubegres.database.myDbUserPassword | quote }} 
-        database: {{ .Values.kubegres.database.name | quote }} 
+        user: {{ .Values.kubegres.database.user | quote }}
+        password: {{ .Values.kubegres.database.myDbUserPassword | quote }}
+        database: {{ .Values.kubegres.database.name | quote }}
         host: {{ .Release.Name }}-kubegres.{{ .Release.Namespace }}.svc.cluster.local
         port: 5432
         cp_min: 5
@@ -47,7 +47,7 @@ data:
     signing_key_path: "/data/{{ .Values.synapse.server_name }}.signing.key"
     old_signing_keys:
     trusted_key_servers:
-      - server_name: {{ .Values.synapse.server_name | quote }} 
+      - server_name: {{ .Values.synapse.server_name | quote }}
     saml2_config:
       sp_config:
       user_mapping_provider:

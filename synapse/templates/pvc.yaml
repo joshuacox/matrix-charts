@@ -4,10 +4,10 @@ metadata:
   name: {{ .Release.Name }}-pv-claim
   namespace:  {{ .Release.Namespace }}
 spec:
-  storageClassName: {{ .Values.synapse.storage.className }} 
+  storageClassName: {{ .Values.synapse.storage.className }}
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
-      storage: {{ .Values.synapse.storage.size }} 
+      storage: {{ .Values.synapse.storage.size }}

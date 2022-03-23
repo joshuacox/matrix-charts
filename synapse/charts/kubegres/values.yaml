@@ -14,6 +14,6 @@ database:
   size: 900Mi
   storageClassName: openebs-lvmpv
   # if left undefined these will be generated
-  #superUserPassword: secret123 
+  #superUserPassword: secret123
   #replicationUserPassword: secret123
   #myDbUserPassword: secret123
